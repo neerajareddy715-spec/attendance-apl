@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Attendance System</title>
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 500px; margin: auto; }
+    input, button { padding: 10px; margin: 5px; font-size: 16px; }
+    #output { margin-top: 20px; padding: 15px; border: 1px solid #ccc; min-height: 50px; }
+  </style>
+</head>
+<body>
+  <h2>Mark Attendance</h2>
+  
+  <input type="text" id="rollNo" placeholder="Enter Roll No" value="101">
+  <button onclick="markAttendance('Present')">Mark Present</button>
+  <button onclick="markAttendance('Absent')">Mark Absent</button>
+  
+  <h3>Output:</h3>
+  <div id="output">Click a button to see result</div>
+
+  <script>
+    async function markAttendance(status) {
+      const rollNo = document.getElementById('rollNo').value;
+      const output = document.getElementById('output');
+      
+      output.innerHTML = "Loading...";
+      
+      try {
+        const res = await fetch('http://localhost:3000/mark-attendance', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rollNo, status })
+        });
+        
+        const data = await res.json();
+        output.innerHTML = `<strong>${data.message}</strong>`;
+        output.style.background = res.ok ? '#d4edda' : '#f8d7da';
+        
+      } catch (error) {
+        output.innerHTML = `Error: ${error.message}`;
+        output.style.background = '#f8d7da';
+      }
+    }
+  </script>
+</body>
+</html>
